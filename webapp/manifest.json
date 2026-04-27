@@ -4,6 +4,15 @@
     "id": "arrows.cap.cli.clientmanager.web.clientmanagerweb",
     "type": "application",
     "i18n": "i18n/i18n.properties",
+    "dataSources": {
+      "mainService": {
+        "uri": "/odata/v4/manager-client/",
+        "type": "OData",
+        "settings": {
+          "odataVersion": "4.0"
+        }
+      }
+    },
     "applicationVersion": {
       "version": "0.0.1"
     },
@@ -33,7 +42,7 @@
     }
   },
   "sap.ui5": {
-    "flexEnabled": true,
+    "flexEnabled": false,
     "dependencies": {
       "minUI5Version": "1.147.1",
       "libs": {
@@ -50,6 +59,15 @@
         "type": "sap.ui.model.resource.ResourceModel",
         "settings": {
           "bundleName": "arrows.cap.cli.clientmanager.web.clientmanagerweb.i18n.i18n"
+        }
+      },
+      "": {
+        "dataSource": "mainService",
+        "preload": true,
+        "settings": {
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": true
         }
       }
     },
@@ -75,9 +93,16 @@
       "routes": [
         {
           "name": "RouteMain",
-          "pattern": ":?query:",
+          "pattern": "",
           "target": [
             "TargetMain"
+          ]
+        },
+        {
+          "name": "RouteClientDetail",
+          "pattern": "clients/{clientId}",
+          "target": [
+            "TargetClientDetail"
           ]
         }
       ],
@@ -85,6 +110,10 @@
         "TargetMain": {
           "id": "Main",
           "name": "Main"
+        },
+        "TargetClientDetail": {
+          "id": "ClientDetail",
+          "name": "ClientDetail"
         }
       }
     },

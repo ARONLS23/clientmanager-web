@@ -1,6 +1,50 @@
-<mvc:View controllerName="arrows.cap.cli.clientmanager.web.clientmanagerweb.controller.Main"
+<mvc:View
+    controllerName="arrows.cap.cli.clientmanager.web.clientmanagerweb.controller.Main"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m">
-    <Page id="page" title="{i18n>title}">
+
+    <Page title="Clientes">
+        <content>
+            <Table
+                id="clientsTable"
+                items="{/Clients}"
+                mode="SingleSelectMaster"
+                itemPress=".onClientPress">
+
+                <headerToolbar>
+                    <Toolbar>
+                        <Title text="Lista de clientes" />
+                        <ToolbarSpacer />
+                        <SearchField
+                            width="18rem"
+                            placeholder="Buscar cliente"
+                            search=".onSearch" />
+                    </Toolbar>
+                </headerToolbar>
+
+                <columns>
+                    <Column>
+                        <Text text="Código" />
+                    </Column>
+                    <Column>
+                        <Text text="Nombre" />
+                    </Column>
+                    <Column>
+                        <Text text="Descripción" />
+                    </Column>
+                </columns>
+
+                <items>
+                    <ColumnListItem type="Navigation">
+                        <cells>
+                            <Text text="{code}" />
+                            <Text text="{name}" />
+                            <Text text="{description}" />
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </content>
     </Page>
+
 </mvc:View>

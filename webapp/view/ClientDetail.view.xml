@@ -1,0 +1,66 @@
+<mvc:View
+    controllerName="arrows.cap.cli.clientmanager.web.clientmanagerweb.controller.ClientDetail"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m">
+
+    <Page
+        title="Detalle de cliente"
+        showNavButton="true"
+        navButtonPress=".onNavBack">
+
+        <content>
+            <ObjectHeader
+                title="{name}"
+                number="{code}"
+                intro="Cliente">
+                <attributes>
+                    <ObjectAttribute title="Descripción" text="{description}" />
+                    <ObjectAttribute title="Creado por" text="{createdBy}" />
+                    <ObjectAttribute title="Modificado por" text="{modifiedBy}" />
+                </attributes>
+            </ObjectHeader>
+
+            <Panel
+                headerText="Proyectos del cliente"
+                class="sapUiResponsiveMargin"
+                width="auto">
+
+                <Table
+                    id="projectsTable"
+                    items="{/Projects}">
+
+                    <columns>
+                        <Column>
+                            <Text text="Código" />
+                        </Column>
+                        <Column>
+                            <Text text="Nombre" />
+                        </Column>
+                        <Column>
+                            <Text text="Estado" />
+                        </Column>
+                        <Column>
+                            <Text text="Fecha inicio" />
+                        </Column>
+                        <Column>
+                            <Text text="Fecha fin" />
+                        </Column>
+                    </columns>
+
+                    <items>
+                        <ColumnListItem>
+                            <cells>
+                                <Text text="{code}" />
+                                <Text text="{name}" />
+                                <Text text="{status}" />
+                                <Text text="{startDate}" />
+                                <Text text="{endDate}" />
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+                </Table>
+            </Panel>
+        </content>
+    </Page>
+
+</mvc:View>
