@@ -27,7 +27,35 @@
 
                 <Table
                     id="projectsTable"
-                    items="{/Projects}">
+                    items="{
+                        path: '/Projects',
+                        parameters: {
+                            $select: 'ID,code,name,description,startDate,endDate,status,client_ID'
+                        }
+                    }"
+                    mode="SingleSelectLeft"
+                    includeItemInSelection="false">
+
+                    <headerToolbar>
+                        <Toolbar>
+                            <Title text="Proyectos del cliente" />
+                            <ToolbarSpacer />
+
+                            <Button
+                                text="Nuevo"
+                                type="Emphasized"
+                                press=".onCreateProject" />
+
+                            <Button
+                                text="Editar"
+                                press=".onEditProject" />
+
+                            <Button
+                                text="Eliminar"
+                                type="Reject"
+                                press=".onDeleteProject" />
+                        </Toolbar>
+                    </headerToolbar>
 
                     <columns>
                         <Column>

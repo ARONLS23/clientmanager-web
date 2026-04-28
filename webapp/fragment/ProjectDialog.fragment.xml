@@ -1,0 +1,81 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+
+    <Dialog
+        id="projectDialog"
+        title="{projectDialog>/title}"
+        contentWidth="36rem"
+        contentHeight="auto">
+
+        <content>
+            <VBox
+                class="sapUiMediumMargin"
+                width="auto">
+
+                <Label text="Código" />
+                <Input
+                    value="{projectDialog>/code}"
+                    maxLength="20"
+                    width="100%"
+                    placeholder="Ejemplo: PRJ004" />
+
+                <Label text="Nombre" class="sapUiMediumMarginTop" />
+                <Input
+                    value="{projectDialog>/name}"
+                    maxLength="100"
+                    width="100%"
+                    placeholder="Nombre del proyecto" />
+
+                <Label text="Descripción" class="sapUiMediumMarginTop" />
+                <TextArea
+                    value="{projectDialog>/description}"
+                    maxLength="255"
+                    rows="4"
+                    width="100%"
+                    placeholder="Descripción del proyecto" />
+
+                <Label text="Fecha inicio" class="sapUiMediumMarginTop" />
+                <DatePicker
+                    value="{projectDialog>/startDate}"
+                    valueFormat="yyyy-MM-dd"
+                    displayFormat="yyyy-MM-dd"
+                    width="100%" />
+
+                <Label text="Fecha fin" class="sapUiMediumMarginTop" />
+                <DatePicker
+                    value="{projectDialog>/endDate}"
+                    valueFormat="yyyy-MM-dd"
+                    displayFormat="yyyy-MM-dd"
+                    width="100%" />
+
+                <Label text="Estado" class="sapUiMediumMarginTop" />
+                <Select
+                    selectedKey="{projectDialog>/status}"
+                    width="100%">
+                    <items>
+                        <core:Item key="PLANNED" text="Planificado" />
+                        <core:Item key="OPEN" text="Abierto" />
+                        <core:Item key="IN_PROGRESS" text="En progreso" />
+                        <core:Item key="DONE" text="Finalizado" />
+                        <core:Item key="CANCELLED" text="Cancelado" />
+                    </items>
+                </Select>
+            </VBox>
+        </content>
+
+        <beginButton>
+            <Button
+                text="Guardar"
+                type="Emphasized"
+                press=".onSaveProject" />
+        </beginButton>
+
+        <endButton>
+            <Button
+                text="Cancelar"
+                press=".onCancelProjectDialog" />
+        </endButton>
+    </Dialog>
+
+</core:FragmentDefinition>
