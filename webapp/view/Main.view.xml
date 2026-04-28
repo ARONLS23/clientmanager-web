@@ -8,7 +8,8 @@
             <Table
                 id="clientsTable"
                 items="{/Clients}"
-                mode="SingleSelectMaster"
+                mode="SingleSelectLeft"
+                includeItemInSelection="false"
                 itemPress=".onClientPress">
 
                 <headerToolbar>
@@ -19,6 +20,19 @@
                             width="18rem"
                             placeholder="Buscar cliente"
                             search=".onSearch" />
+                        <Button
+                            text="Nuevo"
+                            type="Emphasized"
+                            press=".onCreateClient" />
+
+                        <Button
+                            text="Editar"
+                            press=".onEditClient" />
+
+                        <Button
+                            text="Eliminar"
+                            type="Reject"
+                            press=".onDeleteClient" />
                     </Toolbar>
                 </headerToolbar>
 
