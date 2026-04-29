@@ -27,7 +27,7 @@ modules:
           sap.cloud.service: clientmanagerweb
         - Authentication: OAuth2UserTokenExchange
           Name: clientmanagerweb_uaa
-          ServiceInstanceName: clientmanagerweb-xsuaa-service
+          ServiceInstanceName: clientmanager-auth
           ServiceKeyName: clientmanagerweb-uaa-key
           sap.cloud.service: clientmanagerweb
         existing_destinations_policy: update
@@ -77,12 +77,9 @@ resources:
     service-name: clientmanagerweb-destination-service
     service-plan: lite
 - name: clientmanagerweb-uaa
-  type: org.cloudfoundry.managed-service
+  type: org.cloudfoundry.existing-service
   parameters:
-    path: ./xs-security.json
-    service: xsuaa
-    service-name: clientmanagerweb-xsuaa-service
-    service-plan: application
+    service-name: clientmanager-auth
 - name: clientmanagerweb-repo-host
   type: org.cloudfoundry.managed-service
   parameters:
