@@ -23,6 +23,20 @@
       "id": "@sap/generator-fiori:basic",
       "version": "1.23.0",
       "toolsId": "82cd7224-e442-444c-9c61-437684426674"
+    },
+    "crossNavigation": {
+      "inbounds": {
+        "ClientManager-display": {
+          "semanticObject": "ClientManager",
+          "action": "display",
+          "title": "{{appTitle}}",
+          "subTitle": "{{appDescription}}",
+          "signature": {
+            "parameters": {},
+            "additionalParameters": "allowed"
+          }
+        }
+      }
     }
   },
   "sap.ui": {
@@ -123,5 +137,9 @@
       "id": "App",
       "async": true
     }
+  },
+  "sap.cloud": {
+    "public": true,
+    "service": "clientmanagerweb"
   }
 }
