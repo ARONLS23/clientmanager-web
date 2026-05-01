@@ -1,0 +1,177 @@
+<mvc:View
+    controllerName="arrows.cap.cli.clientmanager.web.clientmanagerweb.controller.ProjectDetail"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m">
+
+    <Page
+        title="Detalle de proyecto"
+        showNavButton="true"
+        navButtonPress=".onNavBack">
+
+        <content>
+            <ObjectHeader
+                title="{name}"
+                number="{code}"
+                intro="Proyecto">
+                <attributes>
+                    <ObjectAttribute title="Descripción" text="{description}" />
+                    <ObjectAttribute title="Estado" text="{status}" />
+                    <ObjectAttribute title="Fecha inicio" text="{startDate}" />
+                    <ObjectAttribute title="Fecha fin" text="{endDate}" />
+                </attributes>
+            </ObjectHeader>
+
+            <IconTabBar
+                class="sapUiResponsiveContentPadding"
+                expandable="false">
+
+                <items>
+                    <IconTabFilter
+                        text="Miembros"
+                        key="members"
+                        icon="sap-icon://group">
+
+                        <Table
+                            id="membersTable"
+                            items="{
+                                path: '/ProjectMembers',
+                                parameters: {
+                                    $select: 'ID,role,userName,email,project_ID'
+                                }
+                            }">
+
+                            <headerToolbar>
+                                <Toolbar>
+                                    <Title text="Miembros del proyecto" />
+                                    <ToolbarSpacer />
+                                    <Button text="Nuevo" type="Emphasized" enabled="false" />
+                                    <Button text="Editar" enabled="false" />
+                                    <Button text="Eliminar" type="Reject" enabled="false" />
+                                </Toolbar>
+                            </headerToolbar>
+
+                            <columns>
+                                <Column>
+                                    <Text text="Nombre" />
+                                </Column>
+                                <Column>
+                                    <Text text="Correo" />
+                                </Column>
+                                <Column>
+                                    <Text text="Rol" />
+                                </Column>
+                            </columns>
+
+                            <items>
+                                <ColumnListItem>
+                                    <cells>
+                                        <Text text="{userName}" />
+                                        <Text text="{email}" />
+                                        <Text text="{role}" />
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+                    </IconTabFilter>
+
+                    <IconTabFilter
+                        text="Tareas"
+                        key="tasks"
+                        icon="sap-icon://task">
+
+                        <Table
+                            id="tasksTable"
+                            items="{
+                                path: '/Tasks',
+                                parameters: {
+                                    $select: 'ID,title,description,status,dueDate,project_ID'
+                                }
+                            }">
+
+                            <headerToolbar>
+                                <Toolbar>
+                                    <Title text="Tareas del proyecto" />
+                                    <ToolbarSpacer />
+                                    <Button text="Nuevo" type="Emphasized" enabled="false" />
+                                    <Button text="Editar" enabled="false" />
+                                    <Button text="Eliminar" type="Reject" enabled="false" />
+                                </Toolbar>
+                            </headerToolbar>
+
+                            <columns>
+                                <Column>
+                                    <Text text="Título" />
+                                </Column>
+                                <Column>
+                                    <Text text="Estado" />
+                                </Column>
+                                <Column>
+                                    <Text text="Fecha límite" />
+                                </Column>
+                            </columns>
+
+                            <items>
+                                <ColumnListItem>
+                                    <cells>
+                                        <Text text="{title}" />
+                                        <Text text="{status}" />
+                                        <Text text="{dueDate}" />
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+                    </IconTabFilter>
+
+                    <IconTabFilter
+                        text="Documentos"
+                        key="documents"
+                        icon="sap-icon://documents">
+
+                        <Table
+                            id="documentsTable"
+                            items="{
+                                path: '/Documents',
+                                parameters: {
+                                    $select: 'ID,name,type,url,project_ID'
+                                }
+                            }">
+
+                            <headerToolbar>
+                                <Toolbar>
+                                    <Title text="Documentos del proyecto" />
+                                    <ToolbarSpacer />
+                                    <Button text="Nuevo" type="Emphasized" enabled="false" />
+                                    <Button text="Editar" enabled="false" />
+                                    <Button text="Eliminar" type="Reject" enabled="false" />
+                                </Toolbar>
+                            </headerToolbar>
+
+                            <columns>
+                                <Column>
+                                    <Text text="Nombre" />
+                                </Column>
+                                <Column>
+                                    <Text text="Tipo" />
+                                </Column>
+                                <Column>
+                                    <Text text="URL" />
+                                </Column>
+                            </columns>
+
+                            <items>
+                                <ColumnListItem>
+                                    <cells>
+                                        <Text text="{name}" />
+                                        <Text text="{type}" />
+                                        <Link text="{url}" href="{url}" target="_blank" />
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+                    </IconTabFilter>
+                </items>
+            </IconTabBar>
+        </content>
+    </Page>
+
+</mvc:View>

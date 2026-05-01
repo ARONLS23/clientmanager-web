@@ -45,7 +45,9 @@
                                 text="Nuevo"
                                 type="Emphasized"
                                 press=".onCreateProject" />
-
+                            <Button
+                                text="Ver detalle"
+                                press=".onProjectDetail" />
                             <Button
                                 text="Editar"
                                 press=".onEditProject" />

@@ -118,6 +118,13 @@
           "target": [
             "TargetClientDetail"
           ]
+        },
+        {
+          "name": "RouteProjectDetail",
+          "pattern": "clients/{clientId}/projects/{projectId}",
+          "target": [
+            "TargetProjectDetail"
+          ]
         }
       ],
       "targets": {
@@ -128,6 +135,10 @@
         "TargetClientDetail": {
           "id": "ClientDetail",
           "name": "ClientDetail"
+        },
+        "TargetProjectDetail": {
+          "id": "ProjectDetail",
+          "name": "ProjectDetail"
         }
       }
     },

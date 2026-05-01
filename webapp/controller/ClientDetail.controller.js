@@ -220,6 +220,22 @@ sap.ui.define([
             }
         },
 
+        onProjectDetail: function () {
+            const oContext = this._getSelectedProjectContext();
+
+            if (!oContext) {
+                MessageToast.show("Selecciona un proyecto para ver el detalle.");
+                return;
+            }
+
+            const sProjectId = oContext.getProperty("ID");
+
+            this.getOwnerComponent().getRouter().navTo("RouteProjectDetail", {
+                clientId: this._sClientId,
+                projectId: sProjectId
+            });
+        },
+
         onNavBack: function () {
             this.getOwnerComponent().getRouter().navTo("RouteMain");
         }
