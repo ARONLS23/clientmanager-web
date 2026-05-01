@@ -18,6 +18,10 @@ sap.ui.define([
             this._sMemberDialogMode = null;
             this._oEditMemberContext = null;
 
+            this._oTaskDialog = null;
+            this._sTaskDialogMode = null;
+            this._oEditTaskContext = null;
+
             this.getOwnerComponent()
                 .getRouter()
                 .getRoute("RouteProjectDetail")
@@ -213,6 +217,180 @@ sap.ui.define([
 
         _refreshMembersTable: function () {
             const oTable = this.byId("membersTable");
+            const oBinding = oTable.getBinding("items");
+
+            if (oBinding) {
+                oBinding.refresh();
+            }
+        },
+
+        onCreateTask: function () {
+            this._sTaskDialogMode = "create";
+            this._oEditTaskContext = null;
+
+            this._openTaskDialog({
+                title: "Nueva tarea",
+                taskTitle: "",
+                description: "",
+                status: "PENDING",
+                priority: "MEDIUM",
+                dueDate: "",
+                assignee_ID: ""
+            });
+        },
+
+        onEditTask: function () {
+            const oContext = this._getSelectedTaskContext();
+
+            if (!oContext) {
+                MessageToast.show("Selecciona una tarea para editar.");
+                return;
+            }
+
+            this._sTaskDialogMode = "edit";
+            this._oEditTaskContext = oContext;
+
+            this._openTaskDialog({
+                title: "Editar tarea",
+                taskTitle: oContext.getProperty("title"),
+                description: oContext.getProperty("description"),
+                status: oContext.getProperty("status"),
+                priority: oContext.getProperty("priority"),
+                dueDate: oContext.getProperty("dueDate"),
+                assignee_ID: oContext.getProperty("assignee_ID")
+            });
+        },
+
+        onDeleteTask: function () {
+            const oContext = this._getSelectedTaskContext();
+
+            if (!oContext) {
+                MessageToast.show("Selecciona una tarea para eliminar.");
+                return;
+            }
+
+            const sTaskTitle = oContext.getProperty("title");
+
+            MessageBox.confirm(`¿Deseas eliminar la tarea "${sTaskTitle}"?`, {
+                title: "Eliminar tarea",
+                actions: [MessageBox.Action.DELETE, MessageBox.Action.CANCEL],
+                emphasizedAction: MessageBox.Action.DELETE,
+                onClose: function (sAction) {
+                    if (sAction !== MessageBox.Action.DELETE) {
+                        return;
+                    }
+
+                    oContext.delete().then(function () {
+                        MessageToast.show("Tarea eliminada correctamente.");
+                        this._refreshTasksTable();
+                    }.bind(this)).catch(function () {
+                        MessageBox.error("No se pudo eliminar la tarea.");
+                    });
+                }.bind(this)
+            });
+        },
+
+        onSaveTask: function () {
+            const oDialogModel = this.getView().getModel("taskDialog");
+            const oData = oDialogModel.getData();
+
+            if (!oData.taskTitle || !oData.status || !oData.priority) {
+                MessageBox.warning("Título, estado y prioridad son obligatorios.");
+                return;
+            }
+
+            if (this._sTaskDialogMode === "create") {
+                this._createTask(oData);
+                return;
+            }
+
+            if (this._sTaskDialogMode === "edit") {
+                this._updateTask(oData);
+            }
+        },
+
+        onCancelTaskDialog: function () {
+            if (this._oTaskDialog) {
+                this._oTaskDialog.close();
+            }
+        },
+
+        _createTask: function (oData) {
+            const oModel = this.getView().getModel();
+            const oListBinding = oModel.bindList("/Tasks");
+
+            const oContext = oListBinding.create({
+                title: oData.taskTitle,
+                description: oData.description,
+                status: oData.status,
+                priority: oData.priority,
+                dueDate: oData.dueDate || null,
+                project_ID: this._sProjectId
+            });
+
+            oContext.created().then(function () {
+                MessageToast.show("Tarea creada correctamente.");
+                this._oTaskDialog.close();
+                this._refreshTasksTable();
+            }.bind(this)).catch(function () {
+                MessageBox.error("No se pudo crear la tarea.");
+            });
+        },
+
+        _updateTask: function (oData) {
+            if (!this._oEditTaskContext) {
+                MessageBox.error("No se encontró la tarea a editar.");
+                return;
+            }
+
+            this._oEditTaskContext.setProperty("title", oData.taskTitle);
+            this._oEditTaskContext.setProperty("description", oData.description);
+            this._oEditTaskContext.setProperty("status", oData.status);
+            this._oEditTaskContext.setProperty("priority", oData.priority);
+            this._oEditTaskContext.setProperty("dueDate", oData.dueDate || null);
+
+            this.getView().getModel().submitBatch("$auto").then(function () {
+                MessageToast.show("Tarea actualizada correctamente.");
+                this._oTaskDialog.close();
+                this._refreshTasksTable();
+            }.bind(this)).catch(function () {
+                MessageBox.error("No se pudo actualizar la tarea.");
+            });
+        },
+
+        _openTaskDialog: function (oDialogData) {
+            const oDialogModel = new JSONModel(oDialogData);
+            this.getView().setModel(oDialogModel, "taskDialog");
+
+            if (this._oTaskDialog) {
+                this._oTaskDialog.open();
+                return;
+            }
+
+            Fragment.load({
+                id: this.getView().getId(),
+                name: "arrows.cap.cli.clientmanager.web.clientmanagerweb.fragment.ProjectTaskDialog",
+                controller: this
+            }).then(function (oDialog) {
+                this._oTaskDialog = oDialog;
+                this.getView().addDependent(oDialog);
+                oDialog.open();
+            }.bind(this));
+        },
+
+        _getSelectedTaskContext: function () {
+            const oTable = this.byId("tasksTable");
+            const oSelectedItem = oTable.getSelectedItem();
+
+            if (!oSelectedItem) {
+                return null;
+            }
+
+            return oSelectedItem.getBindingContext();
+        },
+
+        _refreshTasksTable: function () {
+            const oTable = this.byId("tasksTable");
             const oBinding = oTable.getBinding("items");
 
             if (oBinding) {

@@ -92,10 +92,12 @@
 
                         <Table
                             id="tasksTable"
+                            mode="SingleSelectLeft"
+                            includeItemInSelection="false"
                             items="{
                                 path: '/Tasks',
                                 parameters: {
-                                    $select: 'ID,title,description,status,dueDate,project_ID'
+                                    $select: 'ID,title,description,status,priority,dueDate,project_ID,assignee_ID'
                                 }
                             }">
 
@@ -103,9 +105,18 @@
                                 <Toolbar>
                                     <Title text="Tareas del proyecto" />
                                     <ToolbarSpacer />
-                                    <Button text="Nuevo" type="Emphasized" enabled="false" />
-                                    <Button text="Editar" enabled="false" />
-                                    <Button text="Eliminar" type="Reject" enabled="false" />
+
+                                    <Button
+                                        text="Nuevo"
+                                        type="Emphasized"
+                                        press=".onCreateTask" />
+                                    <Button
+                                        text="Editar"
+                                        press=".onEditTask" />
+                                    <Button
+                                        text="Eliminar"
+                                        type="Reject"
+                                        press=".onDeleteTask" />
                                 </Toolbar>
                             </headerToolbar>
 
@@ -117,6 +128,9 @@
                                     <Text text="Estado" />
                                 </Column>
                                 <Column>
+                                    <Text text="Prioridad" />
+                                </Column>
+                                <Column>
                                     <Text text="Fecha límite" />
                                 </Column>
                             </columns>
@@ -126,6 +140,7 @@
                                     <cells>
                                         <Text text="{title}" />
                                         <Text text="{status}" />
+                                        <Text text="{priority}" />
                                         <Text text="{dueDate}" />
                                     </cells>
                                 </ColumnListItem>

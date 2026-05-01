@@ -1,0 +1,83 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+
+    <Dialog
+        title="{taskDialog>/title}"
+        contentWidth="40rem"
+        contentHeight="auto">
+
+        <content>
+            <VBox
+                class="sapUiMediumMargin"
+                width="auto">
+
+                <Label text="Título" required="true" />
+                <Input
+                    value="{taskDialog>/taskTitle}"
+                    placeholder="Título de la tarea" />
+
+                <Label text="Descripción" class="sapUiSmallMarginTop" />
+                <TextArea
+                    value="{taskDialog>/description}"
+                    placeholder="Descripción de la tarea"
+                    rows="4"
+                    width="100%" />
+
+                <Label text="Estado" required="true" class="sapUiSmallMarginTop" />
+                <Select selectedKey="{taskDialog>/status}" width="100%">
+                    <items>
+                        <core:Item key="PENDING" text="Pendiente" />
+                        <core:Item key="IN_PROGRESS" text="En progreso" />
+                        <core:Item key="DONE" text="Finalizado" />
+                        <core:Item key="CANCELLED" text="Cancelado" />
+                    </items>
+                </Select>
+
+                <Label text="Prioridad" required="true" class="sapUiSmallMarginTop" />
+                <Select selectedKey="{taskDialog>/priority}" width="100%">
+                    <items>
+                        <core:Item key="LOW" text="Baja" />
+                        <core:Item key="MEDIUM" text="Media" />
+                        <core:Item key="HIGH" text="Alta" />
+                        <core:Item key="CRITICAL" text="Crítica" />
+                    </items>
+                </Select>
+
+                <Label text="Responsable" class="sapUiSmallMarginTop" />
+                <Select
+                    selectedKey="{taskDialog>/assignee_ID}"
+                    width="100%"
+                    items="{
+                        path: '/ProjectMembers',
+                        parameters: {
+                            $select: 'ID,fullName,project_ID'
+                        }
+                    }">
+                    <core:Item key="{ID}" text="{fullName}" />
+                </Select>
+
+                <Label text="Fecha límite" class="sapUiSmallMarginTop" />
+                <DatePicker
+                    value="{taskDialog>/dueDate}"
+                    valueFormat="yyyy-MM-dd"
+                    displayFormat="yyyy-MM-dd"
+                    width="100%" />
+            </VBox>
+        </content>
+
+        <beginButton>
+            <Button
+                text="Guardar"
+                type="Emphasized"
+                press=".onSaveTask" />
+        </beginButton>
+
+        <endButton>
+            <Button
+                text="Cancelar"
+                press=".onCancelTaskDialog" />
+        </endButton>
+    </Dialog>
+
+</core:FragmentDefinition>
