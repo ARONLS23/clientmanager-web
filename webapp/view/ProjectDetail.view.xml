@@ -33,10 +33,12 @@
 
                         <Table
                             id="membersTable"
+                            mode="SingleSelectLeft"
+                            includeItemInSelection="false"
                             items="{
                                 path: '/ProjectMembers',
                                 parameters: {
-                                    $select: 'ID,role,userName,email,project_ID'
+                                    $select: 'ID,role,fullName,email,project_ID'
                                 }
                             }">
 
@@ -44,9 +46,18 @@
                                 <Toolbar>
                                     <Title text="Miembros del proyecto" />
                                     <ToolbarSpacer />
-                                    <Button text="Nuevo" type="Emphasized" enabled="false" />
-                                    <Button text="Editar" enabled="false" />
-                                    <Button text="Eliminar" type="Reject" enabled="false" />
+
+                                    <Button
+                                        text="Nuevo"
+                                        type="Emphasized"
+                                        press=".onCreateMember" />
+                                    <Button
+                                        text="Editar"
+                                        press=".onEditMember" />
+                                    <Button
+                                        text="Eliminar"
+                                        type="Reject"
+                                        press=".onDeleteMember" />
                                 </Toolbar>
                             </headerToolbar>
 
@@ -65,7 +76,7 @@
                             <items>
                                 <ColumnListItem>
                                     <cells>
-                                        <Text text="{userName}" />
+                                        <Text text="{fullName}" />
                                         <Text text="{email}" />
                                         <Text text="{role}" />
                                     </cells>

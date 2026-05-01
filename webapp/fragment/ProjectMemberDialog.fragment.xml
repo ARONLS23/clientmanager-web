@@ -1,0 +1,47 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+
+    <Dialog
+        title="{memberDialog>/title}"
+        contentWidth="36rem"
+        contentHeight="auto">
+
+        <content>
+            <VBox
+                class="sapUiMediumMargin"
+                width="auto">
+                
+                <Label text="Nombre" required="true" />
+                <Input
+                    value="{memberDialog>/fullName}"
+                    placeholder="Nombre del miembro" />
+
+                <Label text="Correo" required="true" class="sapUiSmallMarginTop" />
+                <Input
+                    value="{memberDialog>/email}"
+                    placeholder="correo@dominio.com"
+                    type="Email" />
+
+                <Label text="Rol" required="true" class="sapUiSmallMarginTop" />
+                <Input
+                    value="{memberDialog>/role}"
+                    placeholder="Ej. Líder, Analista, Consultor" />
+            </VBox>
+        </content>
+
+        <beginButton>
+            <Button
+                text="Guardar"
+                type="Emphasized"
+                press=".onSaveMember" />
+        </beginButton>
+
+        <endButton>
+            <Button
+                text="Cancelar"
+                press=".onCancelMemberDialog" />
+        </endButton>
+    </Dialog>
+
+</core:FragmentDefinition>
