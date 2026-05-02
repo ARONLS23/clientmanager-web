@@ -1,0 +1,62 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:u="sap.ui.unified">
+
+    <Dialog
+        title="{documentDialog>/title}"
+        contentWidth="40rem"
+        contentHeight="auto">
+
+        <content>
+            <VBox
+                class="sapUiMediumMargin"
+                width="auto">
+
+                <Label
+                    text="Archivo"
+                    required="true"
+                    visible="{documentDialog>/isCreate}" />
+
+                <u:FileUploader
+                    id="documentFileUploader"
+                    width="100%"
+                    sameFilenameAllowed="true"
+                    change=".onDocumentFileChange"
+                    placeholder="Selecciona un archivo"
+                    visible="{documentDialog>/isCreate}" />
+
+                <Label text="Nombre" class="sapUiSmallMarginTop" />
+                <Input
+                    value="{documentDialog>/fileName}"
+                    editable="false" />
+
+                <Label text="Tipo MIME" class="sapUiSmallMarginTop" />
+                <Input
+                    value="{documentDialog>/mediaType}"
+                    editable="false" />
+
+                <Label text="Descripción" class="sapUiSmallMarginTop" />
+                <TextArea
+                    value="{documentDialog>/description}"
+                    placeholder="Descripción del documento"
+                    rows="4"
+                    width="100%" />
+            </VBox>
+        </content>
+
+        <beginButton>
+            <Button
+                text="Guardar"
+                type="Emphasized"
+                press=".onSaveDocument" />
+        </beginButton>
+
+        <endButton>
+            <Button
+                text="Cancelar"
+                press=".onCancelDocumentDialog" />
+        </endButton>
+    </Dialog>
+
+</core:FragmentDefinition>

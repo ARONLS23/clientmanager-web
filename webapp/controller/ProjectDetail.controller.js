@@ -22,6 +22,10 @@ sap.ui.define([
             this._sTaskDialogMode = null;
             this._oEditTaskContext = null;
 
+            this._oDocumentDialog = null;
+            this._sDocumentDialogMode = null;
+            this._oEditDocumentContext = null;
+
             this.getOwnerComponent()
                 .getRouter()
                 .getRoute("RouteProjectDetail")
@@ -396,6 +400,269 @@ sap.ui.define([
             if (oBinding) {
                 oBinding.refresh();
             }
+        },
+
+        onCreateDocument: function () {
+            this._sDocumentDialogMode = "create";
+            this._oEditDocumentContext = null;
+
+            this._openDocumentDialog({
+                title: "Nuevo documento",
+                isCreate: true,
+                file: null,
+                fileName: "",
+                mediaType: "",
+                size: 0,
+                description: ""
+            });
+        },
+
+        onEditDocument: function () {
+            const oContext = this._getSelectedDocumentContext();
+
+            if (!oContext) {
+                MessageToast.show("Selecciona un documento para editar.");
+                return;
+            }
+
+            this._sDocumentDialogMode = "edit";
+            this._oEditDocumentContext = oContext;
+
+            this._openDocumentDialog({
+                title: "Editar documento",
+                isCreate: false,
+                file: null,
+                fileName: oContext.getProperty("name"),
+                mediaType: oContext.getProperty("mediaType"),
+                size: oContext.getProperty("size"),
+                description: oContext.getProperty("description")
+            });
+        },
+
+        onDocumentFileChange: function (oEvent) {
+            const aFiles = oEvent.getParameter("files");
+
+            if (!aFiles || !aFiles.length) {
+                return;
+            }
+
+            const oFile = aFiles[0];
+            const oDialogModel = this.getView().getModel("documentDialog");
+
+            oDialogModel.setProperty("/file", oFile);
+            oDialogModel.setProperty("/fileName", oFile.name);
+            oDialogModel.setProperty("/mediaType", oFile.type || "application/octet-stream");
+            oDialogModel.setProperty("/size", oFile.size);
+        },
+
+        onDeleteDocument: function () {
+            const oContext = this._getSelectedDocumentContext();
+
+            if (!oContext) {
+                MessageToast.show("Selecciona un documento para eliminar.");
+                return;
+            }
+
+            const sDocumentName = oContext.getProperty("name");
+
+            MessageBox.confirm(`¿Deseas eliminar el documento "${sDocumentName}"?`, {
+                title: "Eliminar documento",
+                actions: [MessageBox.Action.DELETE, MessageBox.Action.CANCEL],
+                emphasizedAction: MessageBox.Action.DELETE,
+                onClose: function (sAction) {
+                    if (sAction !== MessageBox.Action.DELETE) {
+                        return;
+                    }
+
+                    oContext.delete().then(function () {
+                        MessageToast.show("Documento eliminado correctamente.");
+                        this._refreshDocumentsTable();
+                    }.bind(this)).catch(function () {
+                        MessageBox.error("No se pudo eliminar el documento.");
+                    });
+                }.bind(this)
+            });
+        },
+
+        onSaveDocument: async function () {
+            const oDialogModel = this.getView().getModel("documentDialog");
+            const oData = oDialogModel.getData();
+
+            if (this._sDocumentDialogMode === "create") {
+                await this._uploadDocument(oData);
+                return;
+            }
+
+            if (this._sDocumentDialogMode === "edit") {
+                this._updateDocumentDescription(oData);
+            }
+        },
+
+        onCancelDocumentDialog: function () {
+            if (this._oDocumentDialog) {
+                this._oDocumentDialog.close();
+            }
+        },
+
+        _uploadDocument: async function (oData) {
+            if (!oData.file) {
+                MessageBox.warning("Selecciona un archivo.");
+                return;
+            }
+
+            try {
+                const sBase64Content = await this._readFileAsBase64(oData.file);
+                const oModel = this.getView().getModel();
+
+                const oOperation = oModel.bindContext("/uploadProjectDocument(...)");
+
+                oOperation.setParameter("projectId", this._sProjectId);
+                oOperation.setParameter("fileName", oData.fileName);
+                oOperation.setParameter("mediaType", oData.mediaType || "application/octet-stream");
+                oOperation.setParameter("size", oData.size || 0);
+                oOperation.setParameter("description", oData.description || "");
+                oOperation.setParameter("content", sBase64Content);
+
+                await oOperation.execute();
+
+                MessageToast.show("Documento subido correctamente.");
+                this._oDocumentDialog.close();
+                this._refreshDocumentsTable();
+            } catch (oError) {
+                MessageBox.error("No se pudo subir el documento.");
+            }
+        },
+
+        _updateDocumentDescription: function (oData) {
+            if (!this._oEditDocumentContext) {
+                MessageBox.error("No se encontró el documento a editar.");
+                return;
+            }
+
+            this._oEditDocumentContext.setProperty("description", oData.description || "");
+
+            this.getView().getModel().submitBatch("$auto").then(function () {
+                MessageToast.show("Documento actualizado correctamente.");
+                this._oDocumentDialog.close();
+                this._refreshDocumentsTable();
+            }.bind(this)).catch(function () {
+                MessageBox.error("No se pudo actualizar el documento.");
+            });
+        },
+
+        onDownloadDocument: async function () {
+            const oContext = this._getSelectedDocumentContext();
+
+            if (!oContext) {
+                MessageToast.show("Selecciona un documento para descargar.");
+                return;
+            }
+
+            const sDocumentId = oContext.getProperty("ID");
+
+            try {
+                const oModel = this.getView().getModel();
+                const oOperation = oModel.bindContext("/getProjectDocumentContent(...)");
+
+                oOperation.setParameter("documentId", sDocumentId);
+
+                await oOperation.execute();
+
+                const oResult = oOperation.getBoundContext().getObject();
+
+                this._downloadBase64File(
+                    oResult.content,
+                    oResult.fileName,
+                    oResult.mediaType
+                );
+            } catch (oError) {
+                MessageBox.error("No se pudo descargar el documento.");
+            }
+        },
+
+        _openDocumentDialog: function (oDialogData) {
+            const oDialogModel = new JSONModel(oDialogData);
+            this.getView().setModel(oDialogModel, "documentDialog");
+
+            if (this._oDocumentDialog) {
+                this._oDocumentDialog.open();
+                return;
+            }
+
+            Fragment.load({
+                id: this.getView().getId(),
+                name: "arrows.cap.cli.clientmanager.web.clientmanagerweb.fragment.ProjectDocumentDialog",
+                controller: this
+            }).then(function (oDialog) {
+                this._oDocumentDialog = oDialog;
+                this.getView().addDependent(oDialog);
+                oDialog.open();
+            }.bind(this));
+        },
+
+        _getSelectedDocumentContext: function () {
+            const oTable = this.byId("documentsTable");
+            const oSelectedItem = oTable.getSelectedItem();
+
+            if (!oSelectedItem) {
+                return null;
+            }
+
+            return oSelectedItem.getBindingContext();
+        },
+
+        _refreshDocumentsTable: function () {
+            const oTable = this.byId("documentsTable");
+            const oBinding = oTable.getBinding("items");
+
+            if (oBinding) {
+                oBinding.refresh();
+            }
+        },
+
+        _readFileAsBase64: function (oFile) {
+            return new Promise(function (resolve, reject) {
+                const oReader = new FileReader();
+
+                oReader.onload = function (oEvent) {
+                    const sResult = oEvent.target.result;
+                    const sBase64Content = sResult.includes(",")
+                        ? sResult.split(",").pop()
+                        : sResult;
+
+                    resolve(sBase64Content);
+                };
+
+                oReader.onerror = function () {
+                    reject(new Error("No se pudo leer el archivo."));
+                };
+
+                oReader.readAsDataURL(oFile);
+            });
+        },
+
+        _downloadBase64File: function (sBase64Content, sFileName, sMediaType) {
+            const sBinary = atob(sBase64Content);
+            const aBytes = new Uint8Array(sBinary.length);
+
+            for (let i = 0; i < sBinary.length; i++) {
+                aBytes[i] = sBinary.charCodeAt(i);
+            }
+
+            const oBlob = new Blob([aBytes], {
+                type: sMediaType || "application/octet-stream"
+            });
+
+            const sUrl = URL.createObjectURL(oBlob);
+            const oLink = document.createElement("a");
+
+            oLink.href = sUrl;
+            oLink.download = sFileName || "documento";
+            document.body.appendChild(oLink);
+            oLink.click();
+            document.body.removeChild(oLink);
+
+            URL.revokeObjectURL(sUrl);
         },
 
         onNavBack: function () {

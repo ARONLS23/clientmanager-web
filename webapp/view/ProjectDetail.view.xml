@@ -155,10 +155,12 @@
 
                         <Table
                             id="documentsTable"
+                            mode="SingleSelectLeft"
+                            includeItemInSelection="false"
                             items="{
                                 path: '/Documents',
                                 parameters: {
-                                    $select: 'ID,name,type,url,project_ID'
+                                    $select: 'ID,name,type,description,mediaType,size,project_ID'
                                 }
                             }">
 
@@ -166,9 +168,21 @@
                                 <Toolbar>
                                     <Title text="Documentos del proyecto" />
                                     <ToolbarSpacer />
-                                    <Button text="Nuevo" type="Emphasized" enabled="false" />
-                                    <Button text="Editar" enabled="false" />
-                                    <Button text="Eliminar" type="Reject" enabled="false" />
+
+                                    <Button
+                                        text="Nuevo"
+                                        type="Emphasized"
+                                        press=".onCreateDocument" />
+                                    <Button
+                                        text="Editar descripción"
+                                        press=".onEditDocument" />
+                                    <Button
+                                        text="Descargar"
+                                        press=".onDownloadDocument" />
+                                    <Button
+                                        text="Eliminar"
+                                        type="Reject"
+                                        press=".onDeleteDocument" />
                                 </Toolbar>
                             </headerToolbar>
 
@@ -180,7 +194,10 @@
                                     <Text text="Tipo" />
                                 </Column>
                                 <Column>
-                                    <Text text="URL" />
+                                    <Text text="Descripción" />
+                                </Column>
+                                <Column>
+                                    <Text text="Tamaño" />
                                 </Column>
                             </columns>
 
@@ -189,7 +206,8 @@
                                     <cells>
                                         <Text text="{name}" />
                                         <Text text="{type}" />
-                                        <Link text="{url}" href="{url}" target="_blank" />
+                                        <Text text="{description}" />
+                                        <Text text="{size}" />
                                     </cells>
                                 </ColumnListItem>
                             </items>
